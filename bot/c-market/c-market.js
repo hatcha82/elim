@@ -16,7 +16,7 @@ var sequelize = new Sequelize(
   config.db.options
 )
 var browser = {};
-
+moment.tz.setDefault("Asia/Seoul"); 
 async function getBidData(headers,cachedFile){
   const page = await browser.newPage()
   await page.tracing.start({

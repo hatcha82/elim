@@ -75,8 +75,8 @@ async function getBidData(headers,cachedFile){
   var per = 10;
   var paging =  Math.ceil(currentTotalBidCount/per);  
   if(cachedFile.length > 0){
-    paging = 5;
-    console.log(`Caching 정보가 존재합니다. 최근 ${paging}페이지만 스캔합니다.`)  
+   // paging = 5;
+   // console.log(`Caching 정보가 존재합니다. 최근 ${paging}페이지만 스캔합니다.`)  
   }
   console.log(`Paging Count : ${paging}`)
   for(var i =1; i <= paging; i++){
@@ -216,7 +216,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   
   var data = await getBidData(headers,cachedFile)
 
-  
+    data = _.sortBy(data,'BUYER');
   data = data.filter(data => {
     if(cachedFile.length > 0 && _.where(cachedFile, {BID_NO: data.BID_NO}).length > 0){
       return false;
@@ -238,9 +238,9 @@ async function mailSend(title, bodyHtml,attachmentInfo){
       title += buyerList.length > 5 ? buyerList.slice(0,5).join() + '... 외 ' + (buyerList.length - 5) + '건' : buyerList.join();      
       var fileData = JSON.stringify(data,null,'\t')
       var jsonFile = fileName + '.json';
-      await fs.writeFileSync(jsonFile,  fileData);
+      await fs.writeFileSync(jsonFile,  fileData, { mode: 0o755 });
       var htmlFile = fileName + '.html';
-      await fs.writeFileSync(htmlFile,  bodyHtml);
+      await fs.writeFileSync(htmlFile,  bodyHtml, { mode: 0o755 });
       var excelFile = fileName + '.xls';
       var exceData = data.map((row,idx) => {
         var newObj = {};
@@ -268,10 +268,12 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   }
   
   data = cachedFile.concat(data);
+  data = _.sortBy(data,'BID_NO');
+  data = data.reverse();
   fileData = JSON.stringify(data,null,'\t')
   
   jsonFile = cacheFileName;
-  await fs.writeFileSync(cacheFileName,  fileData);
+  await fs.writeFileSync(cacheFileName,  fileData ,  { mode: 0o755 });
   // var htmlFile = fileName + '.html';
   // await fs.writeFileSync(htmlFile,  bodyHtml);
   // var excelFile = fileName + '.xls';

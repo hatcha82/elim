@@ -239,10 +239,10 @@ async function mailSend(title, bodyHtml,attachmentInfo){
       var title =`[새로운 입찰] `
       title += buyerList.length > 5 ? buyerList.slice(0,5).join() + '... 외 ' + (buyerList.length - 5) + '건' : buyerList.join();      
       var fileData = JSON.stringify(data,null,'\t')
-      var jsonFile = fileName + '.json';
-      await fs.writeFileSync(jsonFile,  fileData);
-      var htmlFile = fileName + '.html';
-      await fs.writeFileSync(htmlFile,  bodyHtml);
+      // var jsonFile = fileName + '.json';
+      // await fs.writeFileSync(jsonFile,  fileData);
+      // var htmlFile = fileName + '.html';
+      // await fs.writeFileSync(htmlFile,  bodyHtml);
       var excelFile = fileName + '.xls';
       var exceData = data.map((row,idx) => {
         var newObj = {};
@@ -257,8 +257,8 @@ async function mailSend(title, bodyHtml,attachmentInfo){
 
       
       await mailSend(title,bodyHtml, {filename : excelFile})   
-      await fs.unlinkSync(jsonFile);
-      await fs.unlinkSync(htmlFile);
+      // await fs.unlinkSync(jsonFile);
+      // await fs.unlinkSync(htmlFile);
       await fs.unlinkSync(excelFile);
     } catch (error) {
       console.log(error)  
@@ -273,7 +273,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   fileData = JSON.stringify(data,null,'\t')
   
   jsonFile = cacheFileName;
-  await fs.writeFileSync(jsonFile,  fileData);
+  await fs.writeFileSync(cacheFileName,  fileData);
   // var htmlFile = fileName + '.html';
   // await fs.writeFileSync(htmlFile,  bodyHtml);
   // var excelFile = fileName + '.xls';

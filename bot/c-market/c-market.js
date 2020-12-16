@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer')
 var moment = require('moment'); // require
+require('moment-timezone'); 
 var inlineCss = require('inline-css');
 var fs = require('fs');
 var _ = require('underscore');

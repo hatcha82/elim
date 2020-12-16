@@ -251,7 +251,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
         return newObj;
       })
       var xls = json2xls(exceData);         
-      await fs.writeFileSync(excelFile, xls, 'binary');
+      await fs.writeFileSync(excelFile, xls,{encoding:'binary', flag:'w'} );
      
 
       

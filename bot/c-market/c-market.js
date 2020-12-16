@@ -195,10 +195,10 @@ async function mailSend(title, bodyHtml,attachmentInfo){
 
   browser = await puppeteer.launch({ headless: true,args: ['--no-sandbox',`--window-size=1080,680`]})
   
-  var fileName = `./data/${moment(). format('YYYY-MM-DD')}.json`;
+  var cacheFileName = `./data/${moment(). format('YYYY-MM')}.json`;
   var cachedFile = [];
   try {
-    cachedFile = await fs.readFileSync(fileName, 'utf8')  
+    cachedFile = await fs.readFileSync(cacheFileName, 'utf8')  
     cachedFile = JSON.parse(cachedFile);
   } catch (error) {
     console.log(error)
@@ -271,8 +271,8 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   
   data = cachedFile.concat(data);
   fileData = JSON.stringify(data,null,'\t')
-  fileName = `./data/${moment(). format('YYYY-MM-DD')}`;
-  jsonFile = fileName + '.json';
+  
+  jsonFile = cacheFileName + '.json';
   await fs.writeFileSync(jsonFile,  fileData);
   // var htmlFile = fileName + '.html';
   // await fs.writeFileSync(htmlFile,  bodyHtml);

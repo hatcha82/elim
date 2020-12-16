@@ -1,6 +1,6 @@
 #!/bin/bash
 
-logPath='/home/hatcha82/webDeploy/furigana_bbs/gnuboard5/scheduler/nodejs/yahooPuppeteer'
+logPath='/home/hatcha82/git/elim/bot/c-market/'
 fileName='db_$(date +%Y%m%d)_$(date +%H%M%S).log' #db_[년월일]_[시분초].log
 # 백업 디렉토리는 /logPath/년월/일 을 체크하여 없는 경우 생성
 if [ ! -d $logPath/ ]
@@ -11,9 +11,9 @@ echo ""
 echo ""
 echo ""
 echo "###################      $(date)    #########################" 
-echo "################### 번역 시작 $logPath/#########################" 
+echo "################### 작업 시작 $logPath/#########################" 
 
-node $logPath/yahoo.js 
+node $logPath/c-market.js 
 
 
 ls $logPath -lh 
@@ -30,7 +30,7 @@ ls $logPath -lh
 
 
 
-echo "################### 번역 종료 $logPath/#########################" 
+echo "################### 작업 종료 $logPath/#########################" 
 echo "###################      $(date)    #########################" 
 echo ""
 echo ""

@@ -193,7 +193,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
 }
 (async () => {  
 
-  browser = await puppeteer.launch({ headless: false,args: ['--no-sandbox',`--window-size=1080,680`]})
+  browser = await puppeteer.launch({ headless: true,args: ['--no-sandbox',`--window-size=1080,680`]})
   
   var fileName = `./data/${moment(). format('YYYY-MM-DD')}.json`;
   var cachedFile = [];

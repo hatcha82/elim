@@ -3,4 +3,5 @@ node_modules/
 config/backupConfig.js
 config/emptyConfig.js
 data/
+log/
 .env

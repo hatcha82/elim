@@ -74,7 +74,6 @@ async function getBidData(headers,cachedFile){
   var data = [];
   var per = 10;
   var paging =  Math.ceil(currentTotalBidCount/per);  
-
   if(cachedFile.length > 0){
     paging = 5;
     console.log(`Caching 정보가 존재합니다. 최근 ${paging}페이지만 스캔합니다.`)  
@@ -192,10 +191,9 @@ async function mailSend(title, bodyHtml,attachmentInfo){
 
 }
 (async () => {  
-
   browser = await puppeteer.launch({ headless: true,args: ['--no-sandbox',`--window-size=1080,680`]})
   
-  var cacheFileName = `./data/${moment(). format('YYYY-MM')}.json`;
+  var cacheFileName = __dirname +`/data/${moment(). format('YYYY-MM')}.json`;
   var cachedFile = [];
   try {
     cachedFile = await fs.readFileSync(cacheFileName, 'utf8')  
@@ -235,7 +233,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
     try {
       var bodyHtml = await createHtml(headers,data,'template.html')
       var buyerList = _.uniq(_.pluck(data,'BUYER'))
-      var fileName = `./data/${moment(). format('YYYY-MM-DD_HHmmss')}`;
+      var fileName =  __dirname +`/data/${moment(). format('YYYY-MM-DD_HHmmss')}`;
       var title =`[새로운 입찰] `
       title += buyerList.length > 5 ? buyerList.slice(0,5).join() + '... 외 ' + (buyerList.length - 5) + '건' : buyerList.join();      
       var fileData = JSON.stringify(data,null,'\t')

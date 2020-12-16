@@ -272,7 +272,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   data = cachedFile.concat(data);
   fileData = JSON.stringify(data,null,'\t')
   
-  jsonFile = cacheFileName + '.json';
+  jsonFile = cacheFileName;
   await fs.writeFileSync(jsonFile,  fileData);
   // var htmlFile = fileName + '.html';
   // await fs.writeFileSync(htmlFile,  bodyHtml);

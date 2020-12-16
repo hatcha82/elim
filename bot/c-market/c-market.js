@@ -77,7 +77,7 @@ async function getBidData(headers,cachedFile){
   if(cachedFile.length > 0){
     paging = 5;
     console.log(`Caching 정보가 존재합니다. 최근 ${paging}페이지만 스캔합니다.`)  
-  }    
+  }
   console.log(`Paging Count : ${paging}`)
   for(var i =1; i <= paging; i++){
     var random = Math.floor(Math.random() * 3) +2;
@@ -231,7 +231,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
   if(data.length > 0){
 
     try {
-      var bodyHtml = await createHtml(headers,data,'template.html')
+      var bodyHtml = await createHtml(headers,data, __dirname + '/template.html')
       var buyerList = _.uniq(_.pluck(data,'BUYER'))
       var fileName =  __dirname +`/data/${moment(). format('YYYY-MM-DD_HHmmss')}`;
       var title =`[새로운 입찰] `

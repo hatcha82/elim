@@ -24,7 +24,7 @@ async function getBidData(headers,cachedFile){
     path: 'trace.json',
     categories: ['devtools.timeline']
   })
-  var url = "https://www.c-market.net/b2b/customer/login.asp" // "https://www.c-market.net/b2b/customer/login.asp"
+  var url = "https://www.c-market.net/login?reqUrl=%2Fb2b%2Fcustomer%2Flogin.asp" // "https://www.c-market.net/b2b/customer/login.asp"
 
   await page.goto(url, {waitUntil: 'networkidle2', timeout: 0})
   console.log(`크롤링 리스트 가져오기: 시작`);     
@@ -33,9 +33,9 @@ async function getBidData(headers,cachedFile){
     selector : '',
     value :  ''        
   }  
-  var idSelector = "#id"
-  var pwdSelect = "#pwd"
-  var loginButnSelector  = "#formLogin > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(3) > input" //"#formLogin > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(3) > input";
+  var idSelector = "#loginId1"
+  var pwdSelect = "#loginPw1"
+  var loginButnSelector  = "#contents > div > div > div.contents_inner > div.cell_box > div:nth-child(2) > div.login_btn.clearfix > div > a" //"#formLogin > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(3) > input";
   await page.waitForSelector(loginButnSelector);
   param = {selector : idSelector,value : config.cMarket.user }
   //await page.evaluate(param => {document.querySelector(param.selector).value = param.value}, param);
@@ -63,17 +63,17 @@ async function getBidData(headers,cachedFile){
   // var newsPage = await browser.newPage()
   // await page.goto(url, {waitUntil: 'networkidle2', timeout: 0})
   console.log("Login OK")
-  await page.goto(config.cMarket.host+ '/b2b/bid/all_bid_list.asp?ing=ing', {waitUntil: 'networkidle2', timeout: 0}) 
+  await page.goto(config.cMarket.host+ '/supplier/board/list?boardType=P', {waitUntil: 'networkidle2', timeout: 0}) 
   
   
-  var tableSelector = '#content > table.tb_List tr';
+  var tableSelector = '.table_bd';
 
-  var currentTotalBidCountSelector = '#content > div.pagingArea.mgt10 > div:nth-child(1) > b'
+  var currentTotalBidCountSelector = '#frmSearch > section > div.page_search > div.search_in.clearfix > div.search_total > span > i'
   var currentTotalBidCount = await page.$$eval(currentTotalBidCountSelector, contents =>  { return contents.map(content => content.innerText) }) 
   console.log(`Total : ${currentTotalBidCount}`)
   currentTotalBidCount = parseInt(currentTotalBidCount + "".split(',').join())
   var data = [];
-  var per = 10;
+  var per = 15;
   var paging =  Math.ceil(currentTotalBidCount/per);  
   if(cachedFile.length > 0){
    // paging = 5;
@@ -84,12 +84,14 @@ async function getBidData(headers,cachedFile){
     var random = Math.floor(Math.random() * 3) +2;
     await page.waitFor(random * 1000)
     console.log(`${i}번째 페이지 데이터를 가져오는 중입니다..`)
-    var url = config.cMarket.host + `/b2b/bid/all_bid_list.asp?curPage=${i}&recordPerPage=&search_gjy=&memarea=&search_target=&search_string=&ing=ing&sort=`
+    
+    var url = config.cMarket.host + `/supplier/board/list?keyword_search=N&cmvType=&area_search=N&area=%EC%84%9C%EC%9A%B8&searchText=&sortType=A&buy_idx=&boardType=P&rowsPerPage=${per}&currentPage=${i}&myList=`
+    
     await page.goto(url, {waitUntil: 'networkidle2', timeout: 0}) 
     await page.waitForSelector(tableSelector);
     var pageData = await page.$$eval(tableSelector, rows => {
       return Array.from(rows, (row,rowSeq )=> {
-        const columns = row.querySelectorAll('td');
+        const columns = row.querySelectorAll('.tbB_list');
         return Array.from(columns, (column,idx)=> { 
           return {
             rowSeq : rowSeq, 
@@ -100,6 +102,7 @@ async function getBidData(headers,cachedFile){
       });
     });
     pageData.shift(pageData)
+   
     data = data.concat(pageData)
     if(cachedFile.length > 0){
       console.log(` ${data.length } / ${per * paging}`)
@@ -192,7 +195,7 @@ async function mailSend(title, bodyHtml,attachmentInfo){
 
 }
 (async () => {  
-  browser = await puppeteer.launch({ headless: true,args: ['--no-sandbox',`--window-size=1080,680`]})
+  browser = await puppeteer.launch({ headless: false,args: ['--no-sandbox',`--window-size=1080,680`]})
   
   var cacheFileName = __dirname +`/data/${moment(). format('YYYY-MM-DD')}.json`;
   var cachedFile = [];
@@ -204,13 +207,11 @@ async function mailSend(title, bodyHtml,attachmentInfo){
     cachedFile = [];
   }
   var headers = [
-      {idx: 0 , key: 'TYPE',title : '유형', class:''}
-    , {idx: 1 , key: 'BID_NO',title : '입찰번호', class:''}
-    , {idx: 2 , key: 'AREA',title : '지역' , class:''}
-    , {idx: 3 , key: 'BUYER',title : '구매사' , class:''}
-    , {idx: 4 , key: 'BID_NM',title : '입찰명' , class:'align-left'}
-    , {idx: 5 , key: 'BID_COUNT',title : '입찰수' , class:''}
-    , {idx: 6 , key: 'BID_DUE',title : '마감일시', class:''}    
+      {idx: 0 , key: 'BID_NO',title : '공고번호', class:''}
+    , {idx: 1 , key: 'BUYER',title : '발주기관', class:''}
+    , {idx: 2 , key: 'BID_NM',title : '공고명' , class:''}
+    , {idx: 3 , key: 'BID_CNT',title : '응찰' , class:''}
+    , {idx: 4 , key: 'BID_DUE',title : '마감일시' , class:'align-left'}    
   ]
  
 
